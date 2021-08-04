@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{F663AF62-603E-B226-8C97-0DE3A6D9408E}</ProjectGuid>
+    <ProjectGuid>{D732EB2A-4802-8BC2-0282-D6AC99C6B825}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Assets\OrganizePokemonArt.cs" />
     <Compile Include="Assets\PokemonNameList.cs" />
+    <Compile Include="Assets\READ ME.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

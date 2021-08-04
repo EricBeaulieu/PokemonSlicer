@@ -9,18 +9,28 @@ public class OrganizePokemonArt : EditorWindow
 {
     int startingInteger = 001;
     int endingInteger = 001;
-    [Tooltip("How many different Pokemon run from left to right")]
+    //How many different Pokemon run from left to right
     int howManyPerLine = 10;
-    public string[] pokemonNames;
-    public int[] differentGenderArt;
+    List <string> pokemonNames = new List<string>();
+    List <int> differentGenderArt = new List<int>();
 
     TextureImporter assetImporter = new TextureImporter();
     string assetPath;
 
+    /*All original art comes from https://www.spriters-resource.com/ds_dsi/pokemonplatinum/
+    In this game the art is a modified version, it is converted into a PNG to give it a transparent background.
+    In the originals there is a flat colour amongst all them and some issues with the original slicing. (weedles a perfect example)
+    This was all done through photoshop, the art provided by me is a modified version
+    */
+
     Vector2 pokemonArtMainSize = new Vector2(324, 195);
+    //each slice that houses all of the sprites
+
     Vector2 startingSlicingPos = new Vector2(0, 1);
+    //this is due to an offset
 
     Vector2 pokemonArtStandardSize = new Vector2(80, 80);
+    //size of each in game battle sprite
 
     Vector2 pokemonFrontAPos = new Vector2(1, 82);
     Vector2 pokemonFrontBPos = new Vector2(82, 82);
@@ -30,15 +40,20 @@ public class OrganizePokemonArt : EditorWindow
     Vector2 pokemonShinyFrontBPos = new Vector2(82, 1);
     Vector2 pokemonShinyBackAPos = new Vector2(163, 1);
     Vector2 pokemonShinyBackBPos = new Vector2(244, 1);
+    //position of each in game battle sprite in according to its housing size
 
     Vector2 pokemonArtSpriteSize = new Vector2(32, 32);
+    //size of the sprite used within the party screen
 
     Vector2 pokemonSpriteAPos = new Vector2(259, 163);
     Vector2 pokemonSpriteBPos = new Vector2(292, 163);
+    //positions of the 2 alternating sprites
 
     Vector2 pokemonArtFootprintSize = new Vector2(16, 16);
+    //size of the pokemons footprint size
 
     Vector2 pokemonFootprintPos = new Vector2(242, 163);
+    //positition of the foot print
 
     [MenuItem("Tools/OrganizeNumbersForArt")]
     public static void ShowWindow()
@@ -54,18 +69,41 @@ public class OrganizePokemonArt : EditorWindow
 
         ScriptableObject target = this;
         SerializedObject sO = new SerializedObject(target);
-        pokemonNames = PokemonNameList.PokemonNameKanto1to151;
-        differentGenderArt = PokemonNameList.PokemonKantoDifferentGenderSprites;
-        SerializedProperty stringsProperty = sO.FindProperty("pokemonNames");
-        SerializedProperty intProperty = sO.FindProperty("differentGenderArt");
-        EditorGUILayout.PropertyField(stringsProperty, true);
-        EditorGUILayout.PropertyField(intProperty, true);
+
+        //This is left here for educational purposes, if someone would like to see the boxes contain the names of the 
+        //pokemon that it auto loaded prior to cleaning it up and updating it to a more dynamic method compared to how
+        //static it was before and any changes needed to be made through code
+
+        //pokemonNames = PokemonNameList.PokemonNameKanto1to151;
+        //differentGenderArt = PokemonNameList.PokemonKantoDifferentGenderSprites;
+        //SerializedProperty stringsProperty = sO.FindProperty("pokemonNames");
+        //SerializedProperty intProperty = sO.FindProperty("differentGenderArt");
+        //EditorGUILayout.PropertyField(stringsProperty, true);
+        //EditorGUILayout.PropertyField(intProperty, true);
+
         sO.ApplyModifiedProperties(); // Remember to apply modified properties
 
         if (GUILayout.Button("Organize Pokemon Selection"))
         {
             if (Selection.objects[0].GetType().Equals(typeof(Texture2D)))
             {
+                if(endingInteger < startingInteger)
+                {
+                    return;
+                }
+
+                pokemonNames.Clear();
+                differentGenderArt.Clear();
+
+                for (int i = startingInteger; i < endingInteger + 1; i++)
+                {
+                    pokemonNames.Add(PokemonNameList.GetPokeDexName(i));
+                    if(PokemonNameList.DifGenderArt(i))
+                    {
+                        differentGenderArt.Add(i);
+                    }
+                }
+
                 Texture2D texture2 = Selection.objects[0] as Texture2D;
 
                 ProcessTexture(texture2);
@@ -73,6 +111,11 @@ public class OrganizePokemonArt : EditorWindow
         }
     }
 
+    /// <summary>
+    /// this helps label the in battle sprites accordingly
+    /// </summary>
+    /// <param name="i"></param>
+    /// <returns></returns>
     string Variant(int i)
     {
         switch (i)
@@ -172,7 +215,7 @@ public class OrganizePokemonArt : EditorWindow
             }
             else if (currentVariant == 9)
             {
-                spriteName += "SpriteA";
+                spriteName += "SpriteB";
             }
             else if (currentVariant == 10)
             {
@@ -203,7 +246,7 @@ public class OrganizePokemonArt : EditorWindow
     {
         List<Rect> list = new List<Rect>();
 
-        for (int i = 0; i < (endingInteger + differentGenderArt.Length) - (startingInteger-1); i++)
+        for (int i = 0; i < (endingInteger + differentGenderArt.Count) - (startingInteger-1); i++)
         {
             int XPos = (int)startingSlicingPos.x + ((int)pokemonArtMainSize.x * (i % howManyPerLine));
             int YPos = textureHeight - (int)startingSlicingPos.y - ((int)pokemonArtMainSize.y * ((i / howManyPerLine) + 1));
@@ -299,7 +342,6 @@ public class OrganizePokemonArt : EditorWindow
                 currentPokemon++;
             }
         }
-
         return list;
     }
 }

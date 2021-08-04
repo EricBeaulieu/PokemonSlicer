@@ -4,9 +4,6 @@ using UnityEngine;
 
 public static class PokemonNameList
 {
-    //Generates names which is f***ing amazing
-    //https://www.dragonflycave.com/resources/pokemon-list-generator?format=%22%25%5Bname%5D%25%22%2C&linebreaks=1&gens=1&order=national
-
     public static string[] PokemonNameKanto1to151 =
     {
         "Bulbasaur",
@@ -161,7 +158,7 @@ public static class PokemonNameList
         "Mewtwo",
         "Mew",
     };
-    public static int[] PokemonKantoDifferentGenderSprites = 
+    public static HashSet<int> PokemonKantoDifferentGenderSprites = new HashSet<int>()
     {
         3,12,19,20,25,
         26,41,42,44,45,
@@ -273,7 +270,7 @@ public static class PokemonNameList
         "Ho-Oh",
         "Celebi",
     };
-    public static int[] PokemonJohtoDifferentGenderSprites =
+    public static HashSet<int> PokemonJohtoDifferentGenderSprites = new HashSet<int>()
     {
         154,165,166,178,185,
         186,190,194,195,198,
@@ -281,11 +278,12 @@ public static class PokemonNameList
         214,215,217,221,224,
         229,232
     };
+
     /// <summary>
     /// Enter in the pokedex number to return the name
     /// </summary>
-    /// <param name="pokedexNumber"></param>
-    public static string GetPokemonName(int pokedexNumber)
+    /// <param name="pokedexNumber">ID #</param>
+    public static string GetPokeDexName(int pokedexNumber)
     {
         pokedexNumber--;
 
@@ -293,8 +291,24 @@ public static class PokemonNameList
         {
             case int n when (n >= 0 && n < PokemonNameKanto1to151.Length):
                 return PokemonNameKanto1to151[pokedexNumber];
+            case int n when (n >= PokemonNameKanto1to151.Length && n < PokemonNameKanto1to151.Length + PokemonNameJohto152to251.Length):
+                pokedexNumber -= PokemonNameKanto1to151.Length;
+                return PokemonNameJohto152to251[pokedexNumber];
             default:
                 return "MissingNo";
+        }
+    }
+
+    public static bool DifGenderArt(int pokedexNumber)
+    {
+        switch (pokedexNumber)
+        {
+            case int n when (n >= 0 && n < PokemonNameKanto1to151.Length):
+                return PokemonKantoDifferentGenderSprites.Contains(pokedexNumber);
+            case int n when (n >= PokemonNameKanto1to151.Length && n < PokemonNameKanto1to151.Length + PokemonNameJohto152to251.Length):
+                return PokemonJohtoDifferentGenderSprites.Contains(pokedexNumber);
+            default:
+                return false;
         }
     }
 }
